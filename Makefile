@@ -10,22 +10,22 @@ GO_VERSION=1.18
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-MIGRATE=docker run --rm -v ${ROOT_DIR}/db/migration:/db/migration --network bank-network migrate/migrate
+MIGRATE=podman run --rm -v ${ROOT_DIR}/db/migration:/db/migration --network bank-network docker.io/migrate/migrate
 
 network:
-	docker network create bank-network
+	podman network create bank-network
 
 postgres:
-	docker run --rm --name postgres_go --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:14-alpine
+	podman run --rm --name postgres_go --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d docker.io/postgres:14-alpine
 
 postgres_stop:
-	docker stop postgres_go
+	podman stop postgres_go
 
 create_db:
-	docker exec -it postgres_go createdb --username=root --owner=root simple_bank
+	podman exec -it postgres_go createdb --username=root --owner=root simple_bank
 
 drop_db:
-	docker exec -it postgres dropdb simple_bank
+	podman exec -it docker.io/postgres dropdb simple_bank
 
 migrate_up:
 	$(MIGRATE) -path db/migration -database "$(DB_URL)" -verbose up
@@ -34,8 +34,8 @@ migrate_down:
 	$(MIGRATE) -path db/migration -database "$(DB_URL)" -verbose down -all
 
 go_exec:
-	docker run -it --rm -v ${ROOT_DIR}:/src -w /src -u ${UID}:${GID} -p 5000:5000 golang:$(GO_VERSION) bash
+	podman run -it --rm -v ${ROOT_DIR}:/src -w /src -u -p 5000:5000 docker.io/golang:$(GO_VERSION) bash
 
 sqlc_generate:
-	docker run --rm -v ${ROOT_DIR}:/src -w /src --user ${UID}:${GID} kjconroy/sqlc generate
+	podman run --rm -v ${ROOT_DIR}:/src -w /src docker.io/kjconroy/sqlc generate
 
