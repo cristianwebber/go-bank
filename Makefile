@@ -1,11 +1,15 @@
 #!/usr/bin/make
 
-DB_URL=postgresql://root:secret@postgres_go:5432/simple_bank?sslmode=disable
+DB_URL="postgresql://root:secret@postgres_go:5432/simple_bank?sslmode=disable"
 GO_VERSION=1.18
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-MIGRATE=podman run --rm -v ${ROOT_DIR}/db/migration:/db/migration --network bank-network docker.io/migrate/migrate
+MIGRATE=\
+				podman run --rm \
+				-v ${ROOT_DIR}/db/migration:/db/migration \
+				--network bank-network \
+				docker.io/migrate/migrate
 
 network:
 	podman network create bank-network
