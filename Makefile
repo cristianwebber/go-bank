@@ -1,4 +1,12 @@
+#!/usr/bin/make
+
+SHELL=/bin/sh
+UID := $(shell id -u)
+GID := $(shell id -g)
+
+
 DB_URL=postgresql://root:secret@postgres_go:5432/simple_bank?sslmode=disable
+GO_VERSION=1.18
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -23,8 +31,11 @@ migrate_up:
 	$(MIGRATE) -path db/migration -database "$(DB_URL)" -verbose up
 
 migrate_down:
-	$(MIGRATE) -path db/migration -database "$(DB_URL)" -verbose down
+	$(MIGRATE) -path db/migration -database "$(DB_URL)" -verbose down -all
+
+go_exec:
+	docker run -it --rm -v ${ROOT_DIR}:/src -w /src -u ${UID}:${GID} -p 5000:5000 golang:$(GO_VERSION) bash
 
 sqlc_generate:
-	echo ${ROOT_DIR}
-	docker run --rm -v ${ROOT_DIR}:/src -w /src kjconroy/sqlc generate
+	docker run --rm -v ${ROOT_DIR}:/src -w /src --user ${UID}:${GID} kjconroy/sqlc generate
+
