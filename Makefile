@@ -25,6 +25,7 @@ postgres:
 
 postgres_stop:
 	podman stop postgres_go
+	podman network rm bank-network
 
 create_db:
 	podman exec -it postgres_go createdb \
@@ -50,13 +51,8 @@ migrate_down:
 		-verbose down \
 		-all
 
-go_exec:
-	podman run -it --rm \
-		-v ${ROOT_DIR}:/src \
-		-w /src \
-		-p 5000:5000 \
-		docker.io/golang:$(GO_VERSION) \
-		bash
+test:
+	go test -v -cover ./...
 
 sqlc_generate:
 	podman run --rm \
