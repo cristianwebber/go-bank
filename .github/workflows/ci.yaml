@@ -23,23 +23,11 @@ jobs:
     - name: Create podman network
       run: make network
 
+    - name: Create podman Postgresql DB
+      run: make postgres
+
     - name: Make migrations
       run: make migrate_up
 
     - name: Test application
       run: make test
-
-    services:
-      postgres_go:
-        image: postgres:14
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: secret
-          POSTGRES_DB: simple_bank
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
