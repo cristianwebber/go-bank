@@ -20,6 +20,9 @@ jobs:
     - name: Checkout step
       uses: actions/checkout@v3
 
+    - name: Create podman network
+      run: make network
+
     - name: Make migrations
       run: make migrate_up
 

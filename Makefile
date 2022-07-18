@@ -21,22 +21,12 @@ postgres:
 		-p 5432:5432 \
 		-e POSTGRES_USER=root \
 		-e POSTGRES_PASSWORD=secret \
+		-e POSTGRES_DB=simple_bank \
 		-d docker.io/postgres:14-alpine
 
 postgres_stop:
 	podman stop postgres_go
 	podman network rm bank-network
-
-create_db:
-	podman exec -it postgres_go createdb \
-		--username=root \
-		--owner=root \
-		simple_bank
-
-drop_db:
-	podman exec -it docker.io/postgres \
-		dropdb \
-		simple_bank
 
 migrate_up:
 	$(MIGRATE) \
@@ -60,4 +50,3 @@ sqlc_generate:
 		-w /src \
 		docker.io/kjconroy/sqlc \
 		generate
-
