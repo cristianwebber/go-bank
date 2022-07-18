@@ -13,12 +13,13 @@ func TestTransferTx(t *testing.T) {
 
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
-	fmt.Println(">> Account balance before:")
-	fmt.Printf("ID=%v Balance=%v\n", account1.ID, account1.Balance)
-	fmt.Printf("ID=%v Balance=%v\n", account2.ID, account2.Balance)
 
 	n := 5
 	amount := int64(10)
+
+	fmt.Printf(">> Account balance before %v transfers of %v:\n", n, amount)
+	fmt.Printf("ID=%v Balance=%v\n", account1.ID, account1.Balance)
+	fmt.Printf("ID=%v Balance=%v\n", account2.ID, account2.Balance)
 
 	errs := make(chan error)
 	results := make(chan TransferTxResult)
@@ -96,6 +97,7 @@ func TestTransferTx(t *testing.T) {
 		require.True(t, diff1 > 0)
 		require.True(t, diff1%amount == 0)
 
+
 		k := int(diff1 / amount)
 		require.True(t, k >= 1 && k <= n)
 		require.NotContains(t, existed, k)
@@ -108,6 +110,10 @@ func TestTransferTx(t *testing.T) {
 
 	updatedAccount2, err := store.GetAccount(context.Background(), account2.ID)
 	require.NoError(t, err)
+
+	fmt.Println(">> Account balance after:")
+	fmt.Printf("ID=%v Balance=%v\n", updatedAccount1.ID, updatedAccount1.Balance)
+	fmt.Printf("ID=%v Balance=%v\n", updatedAccount2.ID, updatedAccount2.Balance)
 
 	require.Equal(t, account1.Balance-int64(n)*amount, updatedAccount1.Balance)
 	require.Equal(t, account2.Balance+int64(n)*amount, updatedAccount2.Balance)
