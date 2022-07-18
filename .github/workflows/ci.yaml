@@ -30,7 +30,7 @@ jobs:
       run: make test
 
     services:
-      postgres:
+      postgres_go:
         image: postgres:14
         env:
           POSTGRES_USER: root
