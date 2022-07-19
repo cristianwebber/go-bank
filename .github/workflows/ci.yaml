@@ -27,7 +27,7 @@ jobs:
       run: make postgres
 
     - name: Make migrations
-      run: make migrate_up
+      run: make migrate
 
     - name: Test application
       run: make test

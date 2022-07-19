@@ -26,9 +26,10 @@ postgres:
 
 postgres_stop:
 	podman stop postgres_go
+	podman rm postgres_go
 	podman network rm bank-network
 
-migrate_up:
+migrate:
 	$(MIGRATE) \
 		-path db/migration \
 		-database "$(DB_URL)" \
@@ -50,3 +51,6 @@ sqlc_generate:
 		-w /src \
 		docker.io/kjconroy/sqlc \
 		generate
+
+server:
+	go run main.go
