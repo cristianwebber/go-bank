@@ -11,10 +11,8 @@ MIGRATE=\
 				--network bank-network \
 				docker.io/migrate/migrate
 
-network:
-	podman network create bank-network
-
 postgres:
+	podman network create bank-network
 	podman run --rm \
 		--name postgres_go \
 		--network bank-network \
@@ -24,9 +22,10 @@ postgres:
 		-e POSTGRES_DB=simple_bank \
 		-d docker.io/postgres:14-alpine
 
+	sleep 5
+
 postgres_stop:
 	podman stop postgres_go
-	podman rm postgres_go
 	podman network rm bank-network
 
 migrate:

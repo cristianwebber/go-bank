@@ -20,9 +20,6 @@ jobs:
     - name: Checkout step
       uses: actions/checkout@v3
 
-    - name: Create podman network
-      run: make network
-
     - name: Create podman Postgresql DB
       run: make postgres
 
