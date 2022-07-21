@@ -26,7 +26,7 @@ postgres:
 
 postgres_stop:
 	podman stop postgres_go
-	podman network rm bank-network
+	podman network rm -f bank-network
 
 migrate:
 	$(MIGRATE) \
